@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.szf.cms.dao.ArticleDao">
+	<resultMap type="Article" id="ArticleResultMap">
+		<id column="id" property="id"/>
+		    <result column="title" property="title"/>
+	     <result column="summary" property="summary"/>
+	     <result column="content" property="content"/>
+	     <result column="picture" property="picture"/>
+	     <result column="channel_Id" property="channelId"/>
+	     <result column="category_Id" property="categoryId"/>
+	     <result column="user_Id" property="userId"/>
+	     <result column="hits" property="hits"/>
+	     <result column="hot" property="hot"/>
+	     <result column="status" property="status"/>
+	     <result column="deleted" property="deleted"/>
+	     <result column="created" property="created"/>
+	     <result column="updated" property="updated"/>
+	     <result column="content_Type" property="contentType"/>
+	     <!-- 封装文章栏目 -->
+	     <association property="channel" javaType="Channel" select="selectChannelById" column="channel_Id"></association>
+	    <!-- 封装文章栏目 -->
+	     <association property="category" javaType="Category" select="selectCategoryById" column="category_Id"></association>
+	    <!-- 封装文章栏目 -->
+	     <association property="user" javaType="User" select="selectUserById" column="user_Id"></association>
+	  </resultMap>
+	
+	<select id="getArticle" resultMap="ArticleResultMap">
+		select * from cms_article
+		<where>
+			<!-- 按文章栏目查询 -->
+			<if test="channelId!=null">
+				channel_id =#{channelId}
+			</if>
+			
+			<!-- 按用户查询 -->
+			<if test="userId!=null">
+				and user_id = #{userId}
+			</if>
+			
+			<!-- 按照分类查询 -->
+			<if test="categoryId!=null">
+				and category_id = #{categoryId}
+			</if>
+			<!-- 根据文章标题查询 -->
+			<if test="title!=null and title!=''">
+				and title like "%${title}%"
+			</if>
+			<!-- 根据文章状态查询 -->
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<!-- 显示在24小时热文 -->
+			<if test="created!=null">
+			  and created between #{created} and now()
+			</if>
+		</where>
+		order by created desc
+	</select>
+	
+	<select id="selectChannelById" resultType="Channel">
+		select * from cms_channel where id =#{channelId}
+	</select>
+	<select id="selectCategoryById" resultType="Category">
+		select * from cms_category where id =#{categoryId}
+	</select>
+	<select id="selectUserById" resultType="user">
+		select * from cms_user where id =#{userId}
+	</select>
+	
+	<select id="getArticleById" resultMap="ArticleResultMap">
+		select * from cms_article where id=#{id}
+	</select>
+	
+	<!-- 增加文章 -->
+	<insert id="insert">
+		insert into cms_article
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="title!=null and title!=''">
+				title,
+			</if>
+			<if test="summary!=null and summary!=''">
+				summary,
+			</if>
+			<if test="content!=null and content!=''">
+				content,
+			</if>
+			<if test="picture!=null and picture!=''">
+				picture,
+			</if>
+			<if test="channelId!=null">
+				channel_Id,
+			</if>
+			<if test="categoryId!=null">
+				category_Id,
+			</if>
+			<if test="userId!=null ">
+				user_Id,
+			</if>
+			<if test="hits!=null">
+				hits,
+			</if>
+			<if test="deleted!=null">
+				deleted,
+			</if>
+			<if test="hot!=null">
+				hot,
+			</if>
+			<if test="status!=null">
+				status,
+			</if>
+			<if test="created!=null">
+				created,
+			</if>
+			<if test="updated!=null">
+				updated,
+			</if>
+			<if test="contentType!=null">
+				content_Type,
+			</if>
+		</trim>
+		<trim prefix=" values (" suffix=")" suffixOverrides=",">
+		<if test="title!=null and title!=''">
+				#{title},
+			</if>
+			<if test="summary!=null and summary!=''">
+				#{summary},
+			</if>
+			<if test="content!=null and content!=''">
+				#{content},
+			</if>
+			<if test="picture!=null and picture!=''">
+				#{picture},
+			</if>
+			<if test="channelId!=null">
+				#{channelId},
+			</if>
+			<if test="categoryId!=null">
+				#{categoryId},
+			</if>
+			<if test="userId!=null ">
+				#{userId},
+			</if>
+			<if test="hits!=null">
+				#{hits},
+			</if>
+			<if test="deleted!=null">
+				#{deleted},
+			</if>
+			<if test="hot!=null">
+				#{hot},
+			</if>
+			<if test="status!=null">
+				#{status},
+			</if>
+			<if test="created!=null">
+				#{created},
+			</if>
+			<if test="updated!=null">
+				#{updated},
+			</if>
+			<if test="contentType!=null">
+				#{contentType},
+			</if>
+		</trim>
+	</insert>
+	
+	<!-- 更新文章 -->
+	<update id="update">
+		update cms_article
+		<trim prefix="set" suffix="where id=#{id}" suffixOverrides=",">
+			<if test="title!=null and title!=''">
+				title=#{title},
+			</if>
+			<if test="summary!=null and summary!=''">
+				summary=#{summary},
+			</if>
+			<if test="content!=null and content!=''">
+				content=#{content},
+			</if>
+			<if test="picture!=null and picture!=''">
+				picture=#{picture},
+			</if>
+			<if test="channelId!=null">
+				channel_Id=#{channelId},
+			</if>
+			<if test="categoryId!=null">
+				category_Id=#{categoryId},
+			</if>
+			<if test="userId!=null ">
+				user_Id=#{userId},
+			</if>
+			<if test="hits!=null">
+				hits=#{hits},
+			</if>
+			<if test="deleted!=null">
+				deleted=#{deleted},
+			</if>
+			<if test="hot!=null">
+				hot=#{hot},
+			</if>
+			<if test="status!=null">
+				status=#{status},
+			</if>
+			<if test="created!=null">
+				created=#{created},
+			</if>
+			<if test="updated!=null">
+				updated=#{updated},
+			</if>
+			<if test="contentType!=null">
+				content_Type=#{content},
+			</if>
+		</trim>
+	</update>
+</mapper>
